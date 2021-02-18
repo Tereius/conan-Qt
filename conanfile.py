@@ -63,13 +63,13 @@ class QtConan(ConanFile):
             self.build_requires("android-sdk/26.1.1@tereius/stable")
             self.build_requires("java_installer/8.0.144@tereius/stable")
             if self.settings.os_build == 'Windows':
-                self.build_requires("strawberryperl/5.26.0@conan/stable")
-                self.build_requires("msys2/20161025@tereius/stable")
+                self.build_requires("strawberryperl/5.30.0.1")
+                self.build_requires("msys2/20200517")
                 self.build_requires_options['msys2'].provideMinGW = True
         if self.settings.os == 'Emscripten':
-            self.build_requires("emsdk_installer/1.38.22@bincrafters/stable")
+            self.build_requires("emsdk_installer/1.38.29@bincrafters/stable")
         if self.settings.os == 'Windows' and self.settings.compiler == 'Visual Studio':
-            self.build_requires("jom/1.1.3@tereius/stable")
+            self.build_requires("jom/1.1.3")
 
     def configure(self):
         if self.options.openssl:
