@@ -64,6 +64,7 @@ class QtConan(ConanFile):
             self.build_requires("java_installer/8.0.144@tereius/stable")
             if self.settings.os_build == 'Windows':
                 self.build_requires("msys2/20200517")
+                self.build_requires_options['msys2'].packages = "base-devel,mingw-w64-i686-toolchain,mingw-w64-x86_64-toolchain"
         if self.settings.os == 'Emscripten':
             self.build_requires("emsdk_installer/1.38.29@bincrafters/stable")
         if self.settings.os == 'Windows' and self.settings.compiler == 'Visual Studio':
