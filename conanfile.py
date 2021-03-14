@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from conans import ConanFile, tools, AutoToolsBuildEnvironment
+from conans.errors import ConanException
 from distutils.spawn import find_executable
 import os
 import shutil
@@ -39,7 +40,7 @@ class QtConan(ConanFile):
     homepage = "https://www.qt.io/"
     license = "http://doc.qt.io/qt-5/lgpl.html"
     exports = ["LICENSE.md", "qtmodules.conf"]
-    exports_sources = ["CMakeLists.txt", "fix_qqmlthread_assertion_dbg.diff", "fix_ios_appstore.diff", "android.patch", "dylibToFramework.sh", "AwesomeQtMetadataParser"]
+    exports_sources = ["CMakeLists.txt", "fix_qqmlthread_assertion_dbg.diff", "android.patch", "dylibToFramework.sh", "AwesomeQtMetadataParser"]
     settings = "os", "arch", "compiler", "build_type", "os_build", "arch_build"
 
     options = dict({
@@ -71,6 +72,8 @@ class QtConan(ConanFile):
             self.build_requires("jom/1.1.3")
 
     def configure(self):
+        if self.settings.os == "iOS":
+            raise ConanException("iOS not supported")
         if self.options.openssl:
             self.requires("OpenSSL/1.1.1b@tereius/stable")
             self.options["OpenSSL"].no_zlib = True
@@ -84,9 +87,6 @@ class QtConan(ConanFile):
             self.options.opengl = "no"
         if self.settings.os == "Android":
             self.options["android-ndk"].makeStandalone = False
-            if self.options.opengl != "no":
-                self.options.opengl = "es2"
-        if self.settings.os == "iOS":
             if self.options.opengl != "no":
                 self.options.opengl = "es2"
         if self.settings.os == 'Emscripten':
@@ -161,7 +161,6 @@ class QtConan(ConanFile):
 
         #tools.replace_in_file("qt5/qtbase/src/corelib/tools/qsimd_p.h", "#    include <x86intrin.h>", "# if !defined(__EMSCRIPTEN__)\n#  include <x86intrin.h>\n# endif")
 
-        tools.patch(patch_file="fix_ios_appstore.diff", base_path="qt5")
         # Do not use subdirectories in plugin folder since this is not App Store compatible
         tools.replace_in_file("qt5/qtdeclarative/src/3rdparty/masm/wtf/OSAllocatorPosix.cpp", "#include <sys/syscall.h>", "#include <sys/syscall.h>\n#include <linux/limits.h>")
         
@@ -242,8 +241,6 @@ class QtConan(ConanFile):
                 self._build_mingw(args)
         elif self.settings.os == "Android":
             self._build_android(args)
-        elif self.settings.os == "iOS":
-            self._build_ios(args)
         elif self.settings.os == "Emscripten":
             self._build_wasm(args)
         elif self.settings.os == "Linux" and os.getenv("RASPBIAN_ROOTFS") is not None:
@@ -305,22 +302,6 @@ class QtConan(ConanFile):
         self.run("%s/qt5/configure %s" % (self.source_folder, " ".join(args)))
         env_build.make()
         env_build.install()
-
-    def _build_ios(self, args):
-        # end workaround
-        args += ["--disable-rpath", "-skip qtserialport"]
-        args += ["-xplatform macx-ios-clang"]
-        args += ["-sdk iphoneos"]
-        args += ["QMAKE_IOS_DEPLOYMENT_TARGET=\"11.0\""]
-        #args += ["-sysroot " + tools.unix_path(self.deps_env_info['android-ndk'].SYSROOT)]
-        if self.settings.build_type == "Debug":
-            args += ["-no-framework"]
-
-        with tools.environment_append({"MAKEFLAGS":"-j %d" % tools.cpu_count()}):
-            self.output.info("Using '%d' threads" % tools.cpu_count())
-            self.run(("%s/qt5/configure " % self.source_folder) + " ".join(args))
-            self.run("make")
-            self.run("make install")
 
     def _build_android(self, args):
         # end workaround
