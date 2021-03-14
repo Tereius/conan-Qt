@@ -142,35 +142,6 @@ jobs:
         CONAN_OPTIONS: "Qt:shared=True,Qt:GUI=True,Qt:widgets=True,Qt:openssl=True,Qt:qtbase=True,Qt:qtsvg=True,Qt:qtdeclarative=True,Qt:qttools=True,Qt:qttranslations=True,Qt:qtgraphicaleffects=True,Qt:qtquickcontrols2=True,Qt:qtquickcontrols=True,Qt:qtmultimedia=True,Qt:qtxmlpatterns=True,Qt:qtdoc=True,Qt:qtlocation=True,Qt:qtsensors=True,Qt:qtconnectivity=True,Qt:qtimageformats=True,Qt:qtx11extras=True,Qt:qtwebsockets=True"
       }
       
-- job: iOS
-  strategy:
-    matrix:
-      Debug:
-        buildType: "Debug"
-      Release:
-        buildType: "Release"
-  pool:
-    vmImage: "macOS-10.14"
-  timeoutInMinutes: 0
-  steps:
-  - template: buildConanRecipe.yml@templates
-    parameters:
-      conanEnv: {
-        CONAN_USERNAME: "tereius",
-        CONAN_CHANNEL: "stable",
-        CONAN_REMOTES: "https://tereius.jfrog.io/artifactory/api/conan/public-conan",
-        CONAN_BASE_PROFILE_BUILDTYPE: "$(buildType)",
-        CONAN_BASE_PROFILE_OS: "iOS",
-        CONAN_BASE_PROFILE_OS_VERSION: "12.0",
-        CONAN_BASE_PROFILE_ARCH: "armv8",
-        CONAN_BASE_PROFILE_OSBUILD: "Macos",
-        CONAN_BASE_PROFILE_ARCHBUILD: "x86_64",
-        CONAN_BASE_PROFILE_COMPILER: "apple-clang",
-        CONAN_BASE_PROFILE_COMPILER_VERSION: "10.0",
-        CONAN_BASE_PROFILE_COMPILER_LIBCXX: "libc++",
-        CONAN_OPTIONS: "Qt:shared=True,Qt:GUI=True,Qt:widgets=True,Qt:openssl=True,Qt:qtbase=True,Qt:qtsvg=True,Qt:qtdeclarative=True,Qt:qttools=True,Qt:qttranslations=True,Qt:qtgraphicaleffects=True,Qt:qtquickcontrols2=True,Qt:qtquickcontrols=True,Qt:qtmultimedia=True,Qt:qtxmlpatterns=True,Qt:qtdoc=True,Qt:qtlocation=True,Qt:qtsensors=True,Qt:qtconnectivity=True,Qt:qtimageformats=True,Qt:qtx11extras=True,Qt:qtwebsockets=True"
-      }
-      
 - job: Emscripten
   strategy:
     matrix:
@@ -205,7 +176,6 @@ jobs:
   - Linux
   - Windows
   - Macos
-  #- iOS
   - Emscripten
   condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI'))
   pool:

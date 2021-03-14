@@ -33,7 +33,7 @@ class QtConan(ConanFile):
     submodules = getsubmodules()
 
     name = "Qt"
-    version = "5.12.4"
+    version = "5.12.10"
     description = "Conan.io package for Qt library."
     url = "https://github.com/Tereius/conan-Qt"
     homepage = "https://www.qt.io/"
@@ -62,7 +62,7 @@ class QtConan(ConanFile):
             self.build_requires("android-ndk/r17b@tereius/stable")
             self.build_requires("android-sdk/26.1.1@tereius/stable")
             self.build_requires("java_installer/8.0.144@tereius/stable")
-            if self.settings.os_build == 'Windows':
+            if tools.os_info.is_windows:
                 self.build_requires("msys2/20200517")
                 self.build_requires_options['msys2'].packages = "base-devel,mingw-w64-i686-toolchain,mingw-w64-x86_64-toolchain"
         if self.settings.os == 'Emscripten':
@@ -164,6 +164,10 @@ class QtConan(ConanFile):
         tools.patch(patch_file="fix_ios_appstore.diff", base_path="qt5")
         # Do not use subdirectories in plugin folder since this is not App Store compatible
         tools.replace_in_file("qt5/qtdeclarative/src/3rdparty/masm/wtf/OSAllocatorPosix.cpp", "#include <sys/syscall.h>", "#include <sys/syscall.h>\n#include <linux/limits.h>")
+        
+        tools.replace_in_file("qt5/qtlocation/src/3rdparty/mapbox-gl-native/platform/default/bidi.cpp", "#include <memory>", "#include <memory>\n#include <stdexcept>")
+        
+        tools.replace_in_file("qt5/qtlocation/src/3rdparty/mapbox-gl-native/src/mbgl/util/convert.cpp", "#include <mbgl/util/convert.hpp>", "#include <mbgl/util/convert.hpp>\n#include <stdint.h>")
 
         if self.settings.os == "Android":
             tools.patch(patch_file="android.patch", base_path="qt5")
