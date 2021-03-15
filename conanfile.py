@@ -40,7 +40,7 @@ class QtConan(ConanFile):
     homepage = "https://www.qt.io/"
     license = "http://doc.qt.io/qt-5/lgpl.html"
     exports = ["LICENSE.md", "qtmodules.conf"]
-    exports_sources = ["CMakeLists.txt", "fix_qqmlthread_assertion_dbg.diff", "android.patch", "dylibToFramework.sh", "AwesomeQtMetadataParser"]
+    exports_sources = ["CMakeLists.txt", "fix_qqmlthread_assertion_dbg.diff"]
     settings = "os", "arch", "compiler", "build_type", "os_build", "arch_build"
 
     options = dict({
@@ -60,12 +60,11 @@ class QtConan(ConanFile):
     def build_requirements(self):
         self._build_system_requirements()
         if self.settings.os == 'Android':
-            self.build_requires("android-ndk/r17b@tereius/stable")
-            self.build_requires("android-sdk/26.1.1@tereius/stable")
+            self.build_requires("android-ndk/r21e@tereius/stable")
+            self.build_requires("android-sdk/latest@tereius/stable")
             self.build_requires("java_installer/8.0.144@tereius/stable")
             if tools.os_info.is_windows:
-                self.build_requires("msys2/20200517")
-                self.build_requires_options['msys2'].packages = "base-devel,mingw-w64-i686-toolchain,mingw-w64-x86_64-toolchain"
+                self.build_requires("msys2/20210228@tereius/stable")
         if self.settings.os == 'Emscripten':
             self.build_requires("emsdk_installer/1.38.29@bincrafters/stable")
         if self.settings.os == 'Windows' and self.settings.compiler == 'Visual Studio':
@@ -167,9 +166,6 @@ class QtConan(ConanFile):
         tools.replace_in_file("qt5/qtlocation/src/3rdparty/mapbox-gl-native/platform/default/bidi.cpp", "#include <memory>", "#include <memory>\n#include <stdexcept>")
         
         tools.replace_in_file("qt5/qtlocation/src/3rdparty/mapbox-gl-native/src/mbgl/util/convert.cpp", "#include <mbgl/util/convert.hpp>", "#include <mbgl/util/convert.hpp>\n#include <stdint.h>")
-
-        if self.settings.os == "Android":
-            tools.patch(patch_file="android.patch", base_path="qt5")
 
         # fix error with mersenne_twisters
         # https://codereview.qt-project.org/c/qt/qtbase/+/245425
@@ -389,12 +385,6 @@ class QtConan(ConanFile):
                 self.copy("libgcc_s_seh-1.dll", dst="bin", src=os.path.join(self.deps_env_info['msys2'].MSYS_ROOT, "mingw64", "bin"))
                 self.copy("libstdc++-6.dll", dst="bin", src=os.path.join(self.deps_env_info['msys2'].MSYS_ROOT, "mingw64", "bin"))
                 self.copy("libwinpthread-1.dll", dst="bin", src=os.path.join(self.deps_env_info['msys2'].MSYS_ROOT, "mingw64", "bin"))
-        if self.settings.os == "iOS" and self.settings.build_type == "Release":
-            dylibToFramework_script = os.path.join(self.source_folder, "dylibToFramework.sh")
-            os.chmod(dylibToFramework_script, os.stat(dylibToFramework_script).st_mode | stat.S_IEXEC)
-            metadataParser_exe = os.path.join(self.source_folder, "AwesomeQtMetadataParser")
-            os.chmod(metadataParser_exe, os.stat(metadataParser_exe).st_mode | stat.S_IEXEC)
-            self.run("%s %s %s" % (dylibToFramework_script, self.package_folder, metadataParser_exe))
 
     def package_id(self):
         self.info.include_build_settings()
