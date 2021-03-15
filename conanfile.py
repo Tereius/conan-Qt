@@ -60,7 +60,7 @@ class QtConan(ConanFile):
     def build_requirements(self):
         self._build_system_requirements()
         if self.settings.os == 'Android':
-            self.build_requires("android-ndk/r21e@tereius/stable")
+            self.build_requires("android-ndk/r17b@tereius/stable")
             self.build_requires("android-sdk/latest@tereius/stable")
             self.build_requires("java_installer/8.0.144@tereius/stable")
             if tools.os_info.is_windows:
