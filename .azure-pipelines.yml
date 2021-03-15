@@ -13,7 +13,7 @@ jobs:
         imageName: "ubuntu-16.04"
         conanBuildOS: "Linux"
       Windows:
-        imageName: "windows-2019"
+        imageName: "vs2017-win2016"
         conanBuildOS: "Win"
   pool:
     vmImage: '$(imageName)'
@@ -26,6 +26,7 @@ jobs:
         CONAN_CHANNEL: "stable",
         CONAN_REMOTES: "https://tereius.jfrog.io/artifactory/api/conan/public-conan",
         CONAN_BASE_PROFILE_PATH: "./buildProfiles/androidArmv7$(conanBuildOS)Host.profile",
+        CONAN_BUILD_PROFILE: "default"
         CONAN_OPTIONS: "Qt:shared=True,Qt:GUI=True,Qt:widgets=True,Qt:openssl=True,Qt:qtbase=True,Qt:qtsvg=True,Qt:qtdeclarative=True,Qt:qttools=True,Qt:qttranslations=True,Qt:qtgraphicaleffects=True,Qt:qtquickcontrols2=True,Qt:qtquickcontrols=True,Qt:qtmultimedia=True,Qt:qtxmlpatterns=True,Qt:qtdoc=True,Qt:qtlocation=True,Qt:qtsensors=True,Qt:qtconnectivity=True,Qt:qtimageformats=True,Qt:qtx11extras=True,Qt:qtwebsockets=True"
       }
 
