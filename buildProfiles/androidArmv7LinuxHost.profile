@@ -9,7 +9,6 @@ compiler.version=9
 compiler.libcxx=libc++
 build_type=Release
 [options]
-android-ndk:makeStandalone=False
 [build_requires]
 android-ndk/r21e@tereius/stable
 android-sdk/latest@tereius/stable
