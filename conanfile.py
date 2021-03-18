@@ -305,7 +305,7 @@ class QtConan(ConanFile):
         args += ["-android-ndk " + self._toUnixPath(self.deps_env_info['android-ndk'].NDK_ROOT)]
         args += ["-android-sdk " + self._toUnixPath(self.deps_env_info['android-sdk'].SDK_ROOT)]
         args += ["-android-ndk-host %s-%s" % (str(self.settings_build.os).lower(), str(self.settings_build.arch))]
-        args += ["-android-toolchain-version " + self.deps_env_info['android-ndk'].TOOLCHAIN_VERSION]
+        #args += ["-android-toolchain-version " + self.deps_env_info['android-ndk'].TOOLCHAIN_VERSION]
         #args += ["-sysroot " + tools.unix_path(self.deps_env_info['android-ndk'].SYSROOT)]
         args += ["-device-option CROSS_COMPILE=" + self.deps_env_info['android-ndk'].CHOST + "-"]
 
