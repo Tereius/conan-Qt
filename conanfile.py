@@ -59,12 +59,6 @@ class QtConan(ConanFile):
 
     def build_requirements(self):
         self._build_system_requirements()
-        if self.settings.os == 'Android':
-            self.build_requires("android-ndk/r21e@tereius/stable")
-            self.build_requires("android-sdk/latest@tereius/stable")
-            self.build_requires("java_installer/8.0.144@tereius/stable")
-            if tools.os_info.is_windows:
-                self.build_requires("msys2/20210228@tereius/stable")
         if self.settings.os == 'Emscripten':
             self.build_requires("emsdk_installer/1.38.29@bincrafters/stable")
         if self.settings.os == 'Windows' and self.settings.compiler == 'Visual Studio':
@@ -85,7 +79,6 @@ class QtConan(ConanFile):
         if not self.options.GUI:
             self.options.opengl = "no"
         if self.settings.os == "Android":
-            self.options["android-ndk"].makeStandalone = False
             if self.options.opengl != "no":
                 self.options.opengl = "es2"
         if self.settings.os == 'Emscripten':
