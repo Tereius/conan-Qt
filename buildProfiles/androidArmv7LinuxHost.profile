@@ -5,7 +5,7 @@ os_build=Linux
 arch=armv7
 arch_build=x86_64
 compiler=clang
-compiler.version=6.0
+compiler.version=9
 compiler.libcxx=libc++
 build_type=Release
 [options]

@@ -41,7 +41,7 @@ class QtConan(ConanFile):
     license = "http://doc.qt.io/qt-5/lgpl.html"
     exports = ["LICENSE.md", "qtmodules.conf"]
     exports_sources = ["CMakeLists.txt", "fix_qqmlthread_assertion_dbg.diff"]
-    settings = "os", "arch", "compiler", "build_type", "os_build", "arch_build"
+    settings = "os", "arch", "compiler", "build_type"
 
     options = dict({
         "shared": [True, False],
@@ -60,7 +60,7 @@ class QtConan(ConanFile):
     def build_requirements(self):
         self._build_system_requirements()
         if self.settings.os == 'Android':
-            self.build_requires("android-ndk/r17b@tereius/stable")
+            self.build_requires("android-ndk/r21e@tereius/stable")
             self.build_requires("android-sdk/latest@tereius/stable")
             self.build_requires("java_installer/8.0.144@tereius/stable")
             if tools.os_info.is_windows:
@@ -74,12 +74,12 @@ class QtConan(ConanFile):
         if self.settings.os == "iOS":
             raise ConanException("iOS not supported")
         if self.options.openssl:
-            self.requires("OpenSSL/1.1.1b@tereius/stable")
-            self.options["OpenSSL"].no_zlib = True
+            self.requires("openssl/1.1.1i")
+            self.options["openssl"].no_zlib = True
             if self.settings.os == 'Emscripten':
-                self.options["OpenSSL"].shared = False
+                self.options["openssl"].shared = False
             else:
-                self.options["OpenSSL"].shared = True
+                self.options["openssl"].shared = True
         if self.options.widgets == True:
             self.options.GUI = True
         if not self.options.GUI:
@@ -219,9 +219,9 @@ class QtConan(ConanFile):
             args += ["-no-openssl"]
         else:
             args += ["-openssl-linked"]
-            args += ["-I %s" % i for i in self._toUnixPath(self.deps_cpp_info["OpenSSL"].include_paths)]
-            libs = self._toUnixPath(self.deps_cpp_info["OpenSSL"].libs)
-            lib_paths = self._toUnixPath(self.deps_cpp_info["OpenSSL"].lib_paths)
+            args += ["-I %s" % i for i in self._toUnixPath(self.deps_cpp_info["openssl"].include_paths)]
+            libs = self._toUnixPath(self.deps_cpp_info["openssl"].libs)
+            lib_paths = self._toUnixPath(self.deps_cpp_info["openssl"].lib_paths)
             os.environ["OPENSSL_LIBS"] = " ".join(["-L"+i for i in lib_paths] + ["-l"+i for i in libs])
             os.environ["OPENSSL_LIBS_DEBUG"] = " ".join(["-L"+i for i in lib_paths] + ["-l"+i for i in libs])
             os.environ["LD_RUN_PATH"] = " ".join([i+":" for i in lib_paths]) # Needed for secondary (indirect) dependency resolving of gnu ld
@@ -312,7 +312,7 @@ class QtConan(ConanFile):
         args += ["-android-ndk-platform android-%s" % (str(self.settings.os.api_level))]
         args += ["-android-ndk " + self._toUnixPath(self.deps_env_info['android-ndk'].NDK_ROOT)]
         args += ["-android-sdk " + self._toUnixPath(self.deps_env_info['android-sdk'].SDK_ROOT)]
-        args += ["-android-ndk-host %s-%s" % (str(self.settings.os_build).lower(), str(self.settings.arch_build))]
+        args += ["-android-ndk-host %s-%s" % (str(self.settings_build.os).lower(), str(self.settings_build.arch))]
         args += ["-android-toolchain-version " + self.deps_env_info['android-ndk'].TOOLCHAIN_VERSION]
         #args += ["-sysroot " + tools.unix_path(self.deps_env_info['android-ndk'].SYSROOT)]
         args += ["-device-option CROSS_COMPILE=" + self.deps_env_info['android-ndk'].CHOST + "-"]
