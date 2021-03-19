@@ -309,10 +309,10 @@ class QtConan(ConanFile):
         #args += ["-sysroot " + tools.unix_path(self.deps_env_info['android-ndk'].SYSROOT)]
         args += ["-device-option CROSS_COMPILE=" + self.deps_env_info['android-ndk'].CHOST + "-"]
 
-        if str(self.settings.arch).startswith('x86'):
-            args.append('-android-arch x86')
-        elif str(self.settings.arch).startswith('x86_64'):
+        if str(self.settings.arch).startswith('x86_64'):
             args.append('-android-arch x86_64')
+        elif str(self.settings.arch).startswith('x86'):
+            args.append('-android-arch x86')
         elif str(self.settings.arch).startswith('armv6'):
             args.append('-android-arch armeabi')
         elif str(self.settings.arch).startswith('armv7'):
