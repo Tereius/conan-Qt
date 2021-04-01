@@ -13,5 +13,6 @@ build_type=Release
 android-ndk/r21e@tereius/stable
 android-sdk/latest@tereius/stable
 java_installer/8.0.144@tereius/stable
+msys2/20200517
 [env] 
  
