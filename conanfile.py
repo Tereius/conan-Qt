@@ -328,7 +328,7 @@ class QtConan(ConanFile):
                 "SYSROOT": self._toUnixPath(tools.get_env("SYSROOT")),
                 "MAKEFLAGS":"-j %d" % tools.cpu_count()
             }):
-            self.run(self._toUnixPath("%s/qt5/configure " % self.source_folder) + " ".join(args), win_bash=tools.os_info.is_windows, msys_mingw=tools.os_info.is_windows)
+            self.run(self._toUnixPath("%s/qt5/configure " % self.source_folder) + " ".join(args), win_bash=tools.os_info.is_windows)
             self.run("make", win_bash=tools.os_info.is_windows)
             self.run("make install", win_bash=tools.os_info.is_windows)
 
